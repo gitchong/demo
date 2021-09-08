@@ -4,17 +4,17 @@
 
 #Prompt for the user to ask if the install should use the IP Address or Fully Qualified Domain Name of the Harbor Server
 PS3='Would you like to install Harbor based on IP or FQDN? '
-select option in IP FQDN
-do
-    case $option in
-        IP)
-            IPorFQDN=$(hostname -I|cut -d" " -f 1)
-            break;;
-        FQDN)
-            IPorFQDN=$(hostname -f)
-            break;;
-     esac
-done
+# select option in IP FQDN
+# do
+#     case $option in
+#         IP)
+#             IPorFQDN=$(hostname -I|cut -d" " -f 1)
+#             break;;
+#         FQDN)
+#             IPorFQDN=$(hostname -f)
+#             break;;
+#      esac
+# done
 
 # Housekeeping
 apt update -y
@@ -32,7 +32,7 @@ apt-get install -y docker-ce docker-ce-cli containerd.io
 tee /etc/docker/daemon.json >/dev/null <<EOF
 {
   "exec-opts": ["native.cgroupdriver=systemd"],
-  "insecure-registries" : ["$IPorFQDN:443","$IPorFQDN:80","0.0.0.0/0"],
+  "insecure-registries" : ["$1:443","$1:80","0.0.0.0/0"],
   "log-driver": "json-file",
   "log-opts": {
     "max-size": "100m"
@@ -63,4 +63,4 @@ cd harbor
 sed -i "s/reg.mydomain.com/$1/g" harbor.yml
 sed -i "s/Harbor12345/$2/g" harbor.yml
 ./install.sh --with-clair --with-chartmuseum
-echo -e "Harbor Installation Complete \n\nPlease log out and log in or run the command 'newgrp docker' to use Docker without sudo\n\nLogin to your harbor instance:\n docker login -u admin -p Harbor12345 $IPorFQDN"
+echo -e "Harbor Installation Complete \n\nPlease log out and log in or run the command 'newgrp docker' to use Docker without sudo\n\nLogin to your harbor instance:\n docker login -u admin -p Harbor12345 $1"
