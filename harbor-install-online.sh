@@ -17,6 +17,7 @@
 # done
 
 # Housekeeping
+apt-get upgrade
 apt update -y
 swapoff --all
 sed -ri '/\sswap\s/s/^#?/#/' /etc/fstab
